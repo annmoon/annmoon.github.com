@@ -18,8 +18,6 @@ viewsourceroot: https://github.com/annmoon/annmoon.github.io/blob/master/
 newsourceroot: https://github.com/annmoon/annmoon.github.io/new/master
 #########################################
 # for duoshuo.com commenting system, uncomment following line if you do not want to include duoshuo.com. 
-#duoshuo_shortname: lixizhi
-#duoshuo_url: "http://lixizhi.github.io"
 # disqus.com commenting system. please note that it is exclusive with duoshuo.com
 disqus_shortname: annmoonsblog
 disqus_url: "http://annmoon.github.io"

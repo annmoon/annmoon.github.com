@@ -1,0 +1,39 @@
+<p>가끔 영문이나 default 로 Linux 를 설치 시 putty 나 xshell 같은 곳에서 vi editor 사용시에 한글입력이 다 깨지는 경우가 있다.</p>
+
+<p>이럴 경우, 아래와 같이 /etc/sysconfig/i18n 을 수정해 줌으로써 간단히 해결 할 수 있다.</p>
+
+<p>참고로, 본인의 환경은 OEL5 (Oracle Enterprise Linux 5) 32bit 환경이고, 커널은 2.6.18-238.el5 이다. (아마 rhel5 에서도 해당 방법이 가능 할 것이다. 하지만 가끔 따로 폰트 패키지를 설치해야 할 경우가 있으니 참고하자.)</p>
+
+<ul>
+  <li>/etc/sysconfig/i18n 파일 수정 후 적용 방법</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">### 본인의 경우 원본 /etc/sysconfig/i18n 을 열어보면, </span>
+<span class="c">### 아래와 같이 셋팅이 되어져 있다. </span>
+
+<span class="nv">LANG</span><span class="o">=</span><span class="s2">"en_US.UTF-8"</span>
+<span class="nv">SYSFONT</span><span class="o">=</span><span class="s2">"latarcyrheb-sun16"</span>
+
+
+<span class="c">### 요 부분을 아래와 같이 바꿔주자 (참고로 root 계정으로 수정가능)</span>
+<span class="nv">LANG</span><span class="o">=</span><span class="s2">"ko_KR.eucKR"</span>
+<span class="nv">SUPPORTED</span><span class="o">=</span><span class="s2">"en_US.UTF-8:en_US:en:ko_KR.eucKR:ko_KR:ko"</span>
+<span class="nv">SYSFONT</span><span class="o">=</span><span class="s2">"latarcyrheb-sun16"</span>
+
+
+<span class="c">## 그런 다음 reboot 하지 않고 적용 되게 source 로 적용하자</span>
+<span class="o">[</span>root@chacha ~]# <span class="nb">source</span> /etc/sysconfig/i18n
+
+
+<span class="c">## 다른 계정에서도 필요하다면 (oracle 같은..) 해당 계정에서도 적용해주자.</span>
+<span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span><span class="nb">source</span> /etc/sysconfig/i18n</code></pre></figure>
+
+<ul>
+  <li>
+    <p>참고로 터미널 프로그램이 putty 일 경우, 캐릭터 셋을 UTF-8 이 아닌 cp949 로 바꿔줘야 되는 경우가 있다.</p>
+  </li>
+  <li>
+    <p>그리고 xshell 일 경우, 인코딩을 Korean (EUC) 로 바꿔주어야 되는 경우도 있다. 참고하자!</p>
+  </li>
+</ul>
+

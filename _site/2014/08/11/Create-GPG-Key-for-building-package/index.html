@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Create GPG Key for building package</title>
+	<meta name="description" content="This is to provide how to generate GPG key for RPM build.">
+	
+	<link rel="canonical" href="/2014/08/11/Create-GPG-Key-for-building-package/">
+	<link rel="alternate" type="application/rss+xml" title="Ann Moon's Blog" href="/feed.xml" />
+	
+	<!-- <link rel="stylesheet" href="/css/main.css"> -->
+    
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/monokai_sublime.min.css">
+	<script type="text/javascript" src="/static/js/highlight.min.js"></script>
+
+    <!--
+    <link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/highlight.js/8.4/styles/monokai_sublime.min.css">
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/highlight.js/8.4/highlight.min.js"></script>
+    -->
+    
+	<script type="text/javascript" src="/static/js/index.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+ <!--  <body data-spy="scroll" data-target="#myAffix"> -->
+  <body>
+
+    <header>
+
+<!-- navbar -->
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Ann Moon's Blog</a>
+      <p class="navbar-text"></p>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+
+        
+          <li>
+        
+        <a href="/">Home</a></li>
+
+        
+          
+            
+              <li>
+            
+            <a href="/projects/"><span class="glyphicon "></span> Projects</a></li>
+          
+        
+          
+            
+              <li>
+            
+            <a href="/about/"><span class="glyphicon "></span> About</a></li>
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+</header>
+
+    <div id="main" class="container main">
+      <div class="row">
+  <div id="myArticle" class="col-sm-9">
+    <div class="post-area post">
+      <header>
+        <h1>Create GPG Key for building package</h1>
+        <p>Aug 11, 2014</p>
+      </header>
+      <hr>
+      <article>
+        <p>This is to provide how to generate GPG key for RPM build.</p>
+
+<h4 id="build-user-create">build user create</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@test1 ~]# adduser annmoon
+<span class="o">[</span>root@test1 ~]# su - annmoon
+<span class="o">[</span>annmoon@test1 ~]<span class="err">$</span></code></pre></figure>
+
+<h4 id="start-gpg-agent">start gpg-agent</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>rngd -r /dev/urandom
+<span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>gpg-agent --use-standard-socket --daemon
+gpg-agent[11340]: directory <span class="sb">`</span>/home/annmoon/.gnupg<span class="s1">' created
+gpg-agent[11340]: directory `/home/annmoon/.gnupg/private-keys-v1.d'</span> created
+<span class="nv">GPG_AGENT_INFO</span><span class="o">=</span>/root/.gnupg/S.gpg-agent:11341:1; <span class="nb">export </span>GPG_AGENT_INFO;
+gpg-agent[11341]: gpg-agent <span class="o">(</span>GnuPG<span class="o">)</span> 2.0.14 started</code></pre></figure>
+
+<h4 id="key-create">Key create</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>cat <span class="sh">&lt;&lt;EOF | gpg --batch --no-tty --gen-key
+&gt; %echo Generating a standard key
+&gt; Key-Type: default
+&gt; Key-Length: 2048
+&gt; Subkey-Type: default
+&gt; Subkey-Length: 2048
+&gt; Name-Real: Ann Moon
+&gt; Name-Email: annmoon@example.com
+&gt; Expire-Date: 5y
+&gt; Passphrase: 사용할 패스워드
+&gt; %commit
+&gt; %echo done
+&gt; EOF
+gpg: keyring `/home/annmoon/.gnupg/secring.gpg' created
+gpg: keyring `/home/annmoon/.gnupg/pubring.gpg' created
+gpg: Generating a standard key
+gpg: /home/annmoon/.gnupg/trustdb.gpg: trustdb created
+gpg: key 34ECC635 marked as ultimately trusted
+</span><span class="err">gpg: done</span></code></pre></figure>
+
+<h4 id="check-gpg-fingerprint">check gpg fingerprint</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>gpg --fingerprint
+gpg: checking the trustdb
+gpg: 3 marginal<span class="o">(</span>s<span class="o">)</span> needed, 1 <span class="nb">complete</span><span class="o">(</span>s<span class="o">)</span> needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2019-07-30
+/home/annmoon/.gnupg/pubring.gpg
+------------------------
+pub   2048R/34ECC635 2014-08-07 <span class="o">[</span>expires: 2019-07-30]
+      Key fingerprint <span class="o">=</span> DABF 4D10 6691 1A4D 3A33  E5BE 83C5 9C90 34EC C635
+uid                  Ann Moon &lt;annmoon@example.com&gt;
+sub   2048R/F8AB3611 2014-08-07 <span class="o">[</span>expires: 2019-07-30]</code></pre></figure>
+
+<h4 id="export-key-file">export key file</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>gpg -a -o RPM-GPG-KEY-builduser --export 34ECC635
+<span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>cat RPM-GPG-KEY-builduser
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v2.0.14 <span class="o">(</span>GNU/Linux<span class="o">)</span> 
+mQENBFPjJvgBCACyUcuJUGaaBiUG70lf/mKHORj4d0sInhjaDjfvtWRA59b+opPI
+DnzeFL3Mkdgg72yUsavNv3sAwC9RiHstCIlIL5Nq4VXF3sP9Lui8IYXhVC3DFnh/
+~~~~ SKIP
+-----END PGP PUBLIC KEY BLOCK-----</code></pre></figure>
+
+<h4 id="if-you-want-to-use-this-key-to-build-rpm-you-need-to-put-this-line-into-rpmmacros">If you want to use this key to build RPM, you need to put this line into .rpmmacros</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'%_gpg_name 34ECC635'</span> &gt;&gt; ~/.rpmmacros
+<span class="o">[</span>annmoon@test1 ~]<span class="nv">$ </span>cat ~/.rpmmacros
+%_gpg_name 34ECC635</code></pre></figure>
+
+
+      </article>
+      <hr>
+
+        <script>
+            window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    </div>
+	<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//annmoonsblog.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+  </div>
+  
+  <div id="content" class="col-sm-3">
+    <!-- <div id="myAffix" class="shadow-bottom-center hidden-xs" data-spy="affix" data-offset-top="0" data-offset-bottom="-20"> -->
+    <div id="myAffix" class="shadow-bottom-center hidden-xs" >
+      <div class="categories-list-header">
+        Content
+      </div>
+      <div class="content-text"></div>
+    </div>
+  </div>
+  
+</div>
+
+    </div>
+
+    
+    <div id="top" data-toggle="tooltip" data-placement="left" title="back to top">
+      <a href="javascript:;">
+        <div class="arrow"></div>
+        <div class="stick"></div>
+      </a>
+    </div>
+
+    <footer class="">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <a href="mailto:ann.moon2867@gmail.com"><span class="glyphicon glyphicon-envelope"></span> ann.moon2867@gmail.com</a>
+        <span class="point"> · </span>
+        
+          <a href="https://github.com/annmoon">
+            <span class="icon">
+              <svg viewBox="0 0 16 16">
+                <path fill="#aaa" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            Github
+            <!-- <span>annmoon</span> -->
+          </a>
+          
+          <span class="point"> · </span>
+          <span><a href="https://github.com/annmoon/annmoon.github.io/blob/master/_posts/2014-08-11-Create-GPG-Key-for-building-package.md">View source</a></span>
+          <span class="point"> · </span>
+          <span><a class="newpost" href="javascript:;">New post</a></span>
+		  <span class="point"> · </span>
+          <span><a href="/feed.xml">RSS</a></span>
+          <span class="point"> · </span>
+          <span>&copy; 2015 LiXizhi</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script type="text/javascript">
+    function OnClickNewPost()
+    {
+        var title = prompt("Please enter title of your post");
+        if (title!=null){
+            title = title.replace(" ", "-");
+            var currentdate = new Date();
+            var urlNewPage = "https://github.com/annmoon/annmoon.github.io/new/master?filename=_posts/" 
+                + currentdate.getFullYear() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getDate() + "-" + title + ".md";
+                
+            var defaultText =  [
+                '---',
+                'layout: post',
+                'comments: true',
+                'categories: diary',
+                '---',
+                '## Title',
+                'text'
+                ].join('\n');
+            urlNewPage += "&value=" + encodeURIComponent(defaultText);
+            window.open(urlNewPage);
+        }
+    }
+    
+    $(function() {
+      // CreateNewPostLinks
+      $('.newpost').each(function(){
+          $(this).click(OnClickNewPost);
+      });
+    });
+</script>
+  
+  </body>
+</html>

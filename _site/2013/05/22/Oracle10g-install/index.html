@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Oracle 10g OUI mode installation</title>
+	<meta name="description" content="Preparation">
+	
+	<link rel="canonical" href="/2013/05/22/Oracle10g-install/">
+	<link rel="alternate" type="application/rss+xml" title="Ann Moon's Blog" href="/feed.xml" />
+	
+	<!-- <link rel="stylesheet" href="/css/main.css"> -->
+    
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/monokai_sublime.min.css">
+	<script type="text/javascript" src="/static/js/highlight.min.js"></script>
+
+    <!--
+    <link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/highlight.js/8.4/styles/monokai_sublime.min.css">
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/highlight.js/8.4/highlight.min.js"></script>
+    -->
+    
+	<script type="text/javascript" src="/static/js/index.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+ <!--  <body data-spy="scroll" data-target="#myAffix"> -->
+  <body>
+
+    <header>
+
+<!-- navbar -->
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Ann Moon's Blog</a>
+      <p class="navbar-text"></p>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+
+        
+          <li>
+        
+        <a href="/">Home</a></li>
+
+        
+          
+            
+              <li>
+            
+            <a href="/projects/"><span class="glyphicon "></span> Projects</a></li>
+          
+        
+          
+            
+              <li>
+            
+            <a href="/about/"><span class="glyphicon "></span> About</a></li>
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+</header>
+
+    <div id="main" class="container main">
+      <div class="row">
+  <div id="myArticle" class="col-sm-9">
+    <div class="post-area post">
+      <header>
+        <h1>Oracle 10g OUI mode installation</h1>
+        <p>May 22, 2013</p>
+      </header>
+      <hr>
+      <article>
+        <h4 id="preparation">Preparation</h4>
+
+<h5 id="create-oracle-user">1) Create Oracle user</h5>
+<p><img src="/images/post/20130522_01.jpg" alt="" /></p>
+
+<p><br /></p>
+
+<h5 id="config-on-sysctlconf">2) config on sysctl.conf</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# vi /etc/sysctl.conf
+<span class="c">## add below lines</span>
+kernel.shmmax<span class="o">=</span>536870912
+kernel.shmmni<span class="o">=</span>4096
+kernel.shmall<span class="o">=</span>2097152
+kernel.sem<span class="o">=</span>250 32000 100 128
+fs.file-max<span class="o">=</span>65536
+net.ipv4.ip_local_port_range<span class="o">=</span>1024 65000
+net.core.rmem_default<span class="o">=</span>262144
+net.core.rmem_max<span class="o">=</span>262144
+net.core.wmem_default<span class="o">=</span>262144
+net.core.wmem_max<span class="o">=</span>262144
+
+
+<span class="o">[</span>root@chacha ~]# sysctl -p
+net.ipv4.ip_forward <span class="o">=</span> 0
+net.ipv4.conf.default.rp_filter <span class="o">=</span> 1
+net.ipv4.conf.default.accept_source_route <span class="o">=</span> 0
+kernel.sysrq <span class="o">=</span> 0
+kernel.core_uses_pid <span class="o">=</span> 1
+kernel.shmmax <span class="o">=</span> 536870912
+kernel.shmmni <span class="o">=</span> 4096
+kernel.shmall <span class="o">=</span> 2097152
+kernel.sem <span class="o">=</span> 250 32000 100 128
+fs.file-max <span class="o">=</span> 65536
+net.ipv4.ip_local_port_range <span class="o">=</span> 1024 65000
+net.core.rmem_default <span class="o">=</span> 262144
+net.core.rmem_max <span class="o">=</span> 262144
+net.core.wmem_default <span class="o">=</span> 262144
+net.core.wmem_max <span class="o">=</span> 262144</code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="config-on-limitsconf">3) config on limits.conf</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# vi  /etc/security/limits.conf
+<span class="c">## adding below lines</span>
+oracle10g soft nproc 2047
+oracle10g hard nproc 16384
+oracle10g soft nofile 1024
+oracle10g hard nofile 65536</code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="config-on-etcpamdlogin">4) config on /etc/pam.d/login</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# vi  /etc/pam.d/login
+<span class="c">## adding below lines</span>
+session   required   pam_limits.so</code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="install-rpm-and-rhel4-patch">5) install rpm and RHEL4 patch</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# umount /media/cdrecorder/
+<span class="o">[</span>root@chacha ~]# mount /media/cdrecorder/
+mount: block device /dev/hdc is write-protected, mounting <span class="nb">read</span>-only
+<span class="o">[</span>root@chacha ~]# <span class="nb">cd</span> /media/cdrecorder/RedHat/RPMS/
+<span class="o">[</span>root@chacha RPMS]# rpm -Uvh libaio-devel-0.3.105-2.i386.rpm
+warning: libaio-devel-0.3.105-2.i386.rpm: V3 DSA signature: NOKEY, key ID db42a60e
+Preparing...                <span class="c">########################################### [100%]</span>
+   1:libaio-devel           <span class="c">########################################### [100%]</span>
+<span class="o">[</span>root@chacha RPMS]#
+<span class="o">[</span>root@chacha RPMS]# <span class="nb">cd</span> /home/oracle/patch
+<span class="o">[</span>root@chacha patch]# unzip p4198954_40_LINUX.zip
+Archive:  p4198954_40_LINUX.zip
+  inflating: compat-libcwait-2.1-1.i386.rpm
+  inflating: compat-oracle-rhel4-1.0-5.i386.rpm
+  inflating: README.txt
+<span class="o">[</span>root@chacha patch]# rpm -Uvh compat-<span class="k">*</span>
+Preparing...                <span class="c">########################################### [100%]</span>
+   1:compat-oracle-rhel4    <span class="c">########################################### [ 50%]</span>
+   2:compat-libcwait        <span class="c">########################################### [100%]</span></code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="oracle-environment-setup">6) Oracle environment setup</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha patch]# su - oracle
+<span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span>vi .bash_profile
+<span class="c">## adding below lines</span>
+<span class="nb">export </span><span class="nv">EDITOR</span><span class="o">=</span>vi
+<span class="nb">export </span><span class="nv">LD_ASSUME_KERNEL</span><span class="o">=</span>2.4.19
+<span class="nb">export </span><span class="nv">ORACLE_BASE</span><span class="o">=</span>/home/oracle
+<span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span><span class="nv">$ORACLE_BASE</span>/product/10g
+<span class="nb">export </span><span class="nv">ORACLE_SID</span><span class="o">=</span>testdb
+<span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span>c
+<span class="nb">export </span><span class="nv">ORACLE_TERM</span><span class="o">=</span>xterm
+<span class="nb">export </span><span class="nv">NLS_LANG</span><span class="o">=</span>AMERICAN_AMERICA.KO16MSWIN949
+<span class="nb">export </span><span class="nv">ORA_NLS33</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>/ocommon/nls/admin/data
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>/lib:/lib:/usr/lib:/usr/local/lib
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$ORACLE_HOME</span>/bin
+<span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>/JRE:<span class="nv">$ORACLE_HOME</span>/jlib:<span class="nv">$ORACLE_HOME</span>/rdbms/jlib</code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="prepare-installatoin-file-10201databaselinux32zip">7) prepare installatoin file (10201_database_linux32.zip)</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span><span class="nb">exit</span>
+<span class="o">[</span>root@chacha ~]# <span class="nb">cd</span> /home/oracle
+<span class="o">[</span>root@chacha oracle]# unzip 10201_database_linux32.zip
+<span class="o">[</span>root@chacha oracle]# chown -R oracle.dba /home/oracle </code></pre></figure>
+
+<p><br /></p>
+
+<h4 id="installation">Installation</h4>
+
+<ul>
+  <li>완전히 로그 아웃 후 VM 에서 oracle 계정으로 로그인, 새 터미널을 하나 띄우고, runInstaller 실행한다.</li>
+</ul>
+
+<p><img src="/images/post/20130522_02.jpg" alt="" /></p>
+
+<p><img src="/images/post/ins_01.jpg" alt="" />
+<img src="/images/post/ins_02.jpg" alt="" />
+<img src="/images/post/ins_03.jpg" alt="" />
+<img src="/images/post/ins_04.jpg" alt="" />
+<img src="/images/post/ins_05.jpg" alt="" /></p>
+
+<ul>
+  <li>설치 중 아래와 같은 화면이 뜨면 root 계정으로 위의 스크립트들을 실행 시킨 후 진행한다.</li>
+</ul>
+
+<p><img src="/images/post/ins_06.jpg" alt="" />
+<img src="/images/post/ins_07.jpg" alt="" />
+<img src="/images/post/ins_08.jpg" alt="" /></p>
+
+<ul>
+  <li>설치 완료 되면 sqlplus 로 접속 확인을 한다.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# su - oracle
+<span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span>sqlplus / as sysdba
+SQL<span class="k">*</span>Plus: Release 10.2.0.1.0 - Production on Wed May 22 11:01:50 2013
+Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2005, Oracle.  All rights reserved.
+Connected to an idle instance.
+SQL&gt;</code></pre></figure>
+
+<p><br /></p>
+
+<h4 id="patch">Patch</h4>
+
+<h5 id="prepare-patch-file">1) Prepare Patch file</h5>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# <span class="nb">cd</span> /home/oracle/patchset
+<span class="o">[</span>root@chacha patchset]# unzip p6810189_10204_Linux-x86.zip</code></pre></figure>
+
+<p><br /></p>
+
+<h5 id="vm---oracle--patch-">2) VM 안의 터미널에서 oracle 계정으로 patch 실행</h5>
+
+<p><img src="/images/post/p_01.jpg" alt="" />
+<img src="/images/post/p_02.jpg" alt="" />
+<img src="/images/post/p_03.jpg" alt="" />
+<img src="/images/post/p_04.jpg" alt="" />
+<img src="/images/post/p_05.jpg" alt="" />
+<img src="/images/post/p_06.jpg" alt="" />
+<img src="/images/post/p_07.jpg" alt="" /></p>
+
+<ul>
+  <li>위와 같은 창이 나오면 root 계정으로 위의 스크립트를 실행해 준다.</li>
+</ul>
+
+<p><img src="/images/post/p_08.jpg" alt="" /></p>
+
+<p><img src="/images/post/p_09.jpg" alt="" /></p>
+
+<ul>
+  <li>설치 완료 되면 sqlplus 로 접속 확인을 한다.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>root@chacha ~]# su - oracle
+<span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span>sqlplus / as sysdba
+SQL<span class="k">*</span>Plus: Release 10.2.0.4.0 - Production on Wed May 22 11:15:29 2013
+Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2007, Oracle.  All Rights Reserved.
+Connected to an idle instance.
+SQL&gt;</code></pre></figure>
+
+<p><br /></p>
+
+<h4 id="create-database">Create DataBase</h4>
+
+<ul>
+  <li>VM 안의 터미널에서 oracle 계정으로 dbca 를 입력한 후 뜨는 창에서 아래 그림과 같이 진행한다.</li>
+</ul>
+
+<p><img src="/images/post/d_01.jpg" alt="" />
+<img src="/images/post/d_02.jpg" alt="" />
+<img src="/images/post/d_03.jpg" alt="" />
+<img src="/images/post/d_04.jpg" alt="" />
+<img src="/images/post/d_05.jpg" alt="" />
+<img src="/images/post/d_06.jpg" alt="" />
+<img src="/images/post/d_07.jpg" alt="" />
+<img src="/images/post/d_08.jpg" alt="" />
+<img src="/images/post/d_09.jpg" alt="" />
+<img src="/images/post/d_10.jpg" alt="" />
+<img src="/images/post/d_11.jpg" alt="" />
+<img src="/images/post/d_12.jpg" alt="" /></p>
+
+<ul>
+  <li>위의 화면에서 종료를 누르면 마지막 확인할 수 있는 창이 뜨고 맨 밑에 OK 버튼이 숨겨져 있다. 그걸 누르면 아래와 같이 파일 생성이 진행된다.</li>
+</ul>
+
+<p><img src="/images/post/d_13.jpg" alt="" />
+<img src="/images/post/d_14.jpg" alt="" /></p>
+
+<ul>
+  <li>설치 완료 되면 sqlplus 로 접속 확인을 하고 생성 된 DB 를 확인한다.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>oracle@chacha ~]<span class="nv">$ </span>sqlplus / as sysdba
+SQL<span class="k">*</span>Plus: Release 10.2.0.4.0 - Production on Wed May 22 11:49:37 2013
+Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2007, Oracle.  All Rights Reserved.
+Connected to:
+Oracle Database 10g Enterprise Edition Release 10.2.0.4.0 - Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+<span class="gp">SQL&gt; </span><span class="k">select </span>status from v<span class="nv">$instance</span>;
+STATUS
+------------
+OPEN
+<span class="gp">SQL&gt; </span><span class="k">select </span>name from v<span class="nv">$database</span>;
+NAME
+---------
+TESTDB
+SQL&gt;</code></pre></figure>
+
+
+      </article>
+      <hr>
+
+        <script>
+            window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    </div>
+	<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//annmoonsblog.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+  </div>
+  
+  <div id="content" class="col-sm-3">
+    <!-- <div id="myAffix" class="shadow-bottom-center hidden-xs" data-spy="affix" data-offset-top="0" data-offset-bottom="-20"> -->
+    <div id="myAffix" class="shadow-bottom-center hidden-xs" >
+      <div class="categories-list-header">
+        Content
+      </div>
+      <div class="content-text"></div>
+    </div>
+  </div>
+  
+</div>
+
+    </div>
+
+    
+    <div id="top" data-toggle="tooltip" data-placement="left" title="back to top">
+      <a href="javascript:;">
+        <div class="arrow"></div>
+        <div class="stick"></div>
+      </a>
+    </div>
+
+    <footer class="">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <a href="mailto:ann.moon2867@gmail.com"><span class="glyphicon glyphicon-envelope"></span> ann.moon2867@gmail.com</a>
+        <span class="point"> · </span>
+        
+          <a href="https://github.com/annmoon">
+            <span class="icon">
+              <svg viewBox="0 0 16 16">
+                <path fill="#aaa" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            Github
+            <!-- <span>annmoon</span> -->
+          </a>
+          
+          <span class="point"> · </span>
+          <span><a href="https://github.com/annmoon/annmoon.github.io/blob/master/_posts/2013-05-22-Oracle10g-install.md">View source</a></span>
+          <span class="point"> · </span>
+          <span><a class="newpost" href="javascript:;">New post</a></span>
+		  <span class="point"> · </span>
+          <span><a href="/feed.xml">RSS</a></span>
+          <span class="point"> · </span>
+          <span>&copy; 2015 LiXizhi</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script type="text/javascript">
+    function OnClickNewPost()
+    {
+        var title = prompt("Please enter title of your post");
+        if (title!=null){
+            title = title.replace(" ", "-");
+            var currentdate = new Date();
+            var urlNewPage = "https://github.com/annmoon/annmoon.github.io/new/master?filename=_posts/" 
+                + currentdate.getFullYear() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getDate() + "-" + title + ".md";
+                
+            var defaultText =  [
+                '---',
+                'layout: post',
+                'comments: true',
+                'categories: diary',
+                '---',
+                '## Title',
+                'text'
+                ].join('\n');
+            urlNewPage += "&value=" + encodeURIComponent(defaultText);
+            window.open(urlNewPage);
+        }
+    }
+    
+    $(function() {
+      // CreateNewPostLinks
+      $('.newpost').each(function(){
+          $(this).click(OnClickNewPost);
+      });
+    });
+</script>
+  
+  </body>
+</html>

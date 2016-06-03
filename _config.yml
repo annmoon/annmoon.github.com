@@ -14,9 +14,9 @@ github_username: annmoon
 permalink: /:year/:month/:day/:title/
 # this is the url root of the view source link on the footer page.
 ##viewsourceroot: https://github.com/annmoon/annmoon.github.io/blob/master/
-viewsourceroot: https://github.com/annmoon/annmoon.github.com/blob/master/index.md
+viewsourceroot: https://github.com/annmoon/annmoon.github.com/blob/master/
 # this is the url root of the create page link on the footer page.
-newsourceroot: https://github.com/annmoon/annmoon.github.io/new/master
+newsourceroot: https://github.com/annmoon/annmoon.github.com/new/master
 #########################################
 # for duoshuo.com commenting system, uncomment following line if you do not want to include duoshuo.com. 
 # disqus.com commenting system. please note that it is exclusive with duoshuo.com

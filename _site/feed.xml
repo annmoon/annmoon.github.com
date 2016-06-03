@@ -5,9 +5,104 @@
     <description>Ann Moon&#39;s Blogs</description>
     <link>/</link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 02 Jun 2016 18:01:48 +0900</pubDate>
-    <lastBuildDate>Thu, 02 Jun 2016 18:01:48 +0900</lastBuildDate>
+    <pubDate>Fri, 03 Jun 2016 15:36:50 +0900</pubDate>
+    <lastBuildDate>Fri, 03 Jun 2016 15:36:50 +0900</lastBuildDate>
     <generator>Jekyll v3.0.3</generator>
+    
+      <item>
+        <title>How to set up SSH Passwordless Login on CentOS 7</title>
+        <description>&lt;h3 id=&quot;create-a-pair-of-keys-publicprivate&quot;&gt;create a pair of keys (public/private)&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# on local server&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;deploy@local ~ &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;which to save the key &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;/home/deploy/.ssh/id_rsa&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 
+
+&lt;span class=&quot;c&quot;&gt;# if you want to no passphrase, you just enter. but, it can be riskly on security&lt;/span&gt;
+
+Enter passphrase &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;empty &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;no passphrase&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 
+Enter same passphrase again: 
+Your identification has been saved &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; /home/deploy/.ssh/id_rsa.
+Your public key has been saved &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; /home/deploy/.ssh/id_rsa.pub.
+The key fingerprint is:
+5e:ce:6f:10:73:01:a6:25:82:20:86:81:b8:ea:44:45 deploy@local&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Once you have created, you will find two files inside the .ssh directory. id_rsa (private key) and id_rsa.pub (public key).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;deploy@local ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; .ssh
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;deploy@local .ssh]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ll
+total 16
+-rw-------. 1 deploy deploy 1675 Jun  3 05:49 id_rsa
+-rw-r--r--. 1 deploy deploy  397 Jun  3 05:49 id_rsa.pub&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;copy-public-key-to-remote-host&quot;&gt;Copy public key to remote host&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# on local server&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;deploy@local .ssh]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ssh-copy-id -i ~/.ssh/id_rsa.pub deploy@remote_servername&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;try to ssh into remote server&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;deploy@local ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ssh deploy@remote_servername&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+
+  &lt;p&gt;if your OS is CentOS 7 (or RHEL 7) and it is still required password, it can be due to encrypt the user directory. 
+So that the authorized_keys file placed in ~/.ssh/ on remote server would not work.
+In this case, let’s move authorized_keys file into another place and then make change sshd config as below.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# on remote server as root user&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@remote ~]# sudo cp /home/deploy/.ssh/authorized_keys /etc/ssh/authorized_keys
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@remote ~]# vi /etc/ssh/sshd_config
+
+&lt;span class=&quot;c&quot;&gt;# change AuthorizedKeysFile property&lt;/span&gt;
+AuthorizedKeysFile      /etc/ssh/authorized_keys
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@remote ~]# systemctl restart sshd&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Fri, 03 Jun 2016 00:00:00 +0900</pubDate>
+        <link>/2016/06/03/SSH-Passwordless-Login-CentOS7/</link>
+        <guid isPermaLink="true">/2016/06/03/SSH-Passwordless-Login-CentOS7/</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
+    
+      <item>
+        <title>How to install/config Ansible on CentOS 7</title>
+        <description>&lt;h3 id=&quot;install-via-yum&quot;&gt;Install via Yum&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# install the epel-release RPM if needed on CentOS, RHEL, or Scientific Linux&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;sudo yum install ansible&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;simple-testing&quot;&gt;Simple testing&lt;/h3&gt;
+
+</description>
+        <pubDate>Fri, 03 Jun 2016 00:00:00 +0900</pubDate>
+        <link>/2016/06/03/Ansible-install/</link>
+        <guid isPermaLink="true">/2016/06/03/Ansible-install/</guid>
+        
+        
+        <category>Configuration Management</category>
+        
+      </item>
     
       <item>
         <title>How to Install and Configure MySQL Cluster on CentOS 7</title>
@@ -1046,148 +1141,6 @@ DnzeFL3Mkdgg72yUsavNv3sAwC9RiHstCIlIL5Nq4VXF3sP9Lui8IYXhVC3DFnh/
         <guid isPermaLink="true">/2014/08/11/Create-GPG-Key-for-building-package/</guid>
         
         <category>Create GPG Key for building package</category>
-        
-        
-        <category>linux</category>
-        
-      </item>
-    
-      <item>
-        <title>Two Factor SSH with Google Authenticator</title>
-        <description>&lt;ul&gt;
-  &lt;li&gt;How to set up Two Factor SSH with Google Authenticator (on CentOS 6)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;download--install&quot;&gt;Download &amp;amp; Install&lt;/h4&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# yum install make gcc pam-devel
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# yum install wget
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# yum install ntp
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# /etc/init.d/ntpd start
-Starting ntpd:                                             &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;  OK  &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# chkconfig ntpd on
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /opt/
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test opt]# wget https://google-authenticator.googlecode.com/files/libpam-google-authenticator-1.0-source.tar.bz2
---2014-09-11 15:11:58--  https://google-authenticator.googlecode.com/files/libpam-google-authenticator-1.0-source.tar.bz2
-Resolving google-authenticator.googlecode.com... 173.194.72.82, 2404:6800:4008:c04::52
-Connecting to google-authenticator.googlecode.com|173.194.72.82|:443... connected.
-ERROR: cannot verify google-authenticator.googlecode.com’s certificate, issued by “/C&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;KR/ST&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Seoul/L&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Seoul/~~~~~~~”:
-  Unable to locally verify the issuer’s authority.
-To connect to google-authenticator.googlecode.com insecurely, use ‘--no-check-certificate’.
-
-&lt;span class=&quot;c&quot;&gt;## if you see above error, you need to use --no-check-certificate option &lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test opt]# wget --no-check-certificate https://google-authenticator.googlecode.com/files/libpam-google-authenticator-1.0-source.tar.bz2
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test opt]# bzip2 -d libpam-google-authenticator-1.0-source.tar.bz2
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test opt]# tar -xvf libpam-google-authenticator-1.0-source.tar
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test opt]# &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;libpam-google-authenticator-1.0
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test libpam-google-authenticator-1.0]# 
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test libpam-google-authenticator-1.0]# make
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test libpam-google-authenticator-1.0]# make install&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;set-up-google-authenticator&quot;&gt;Set up Google Authenticator&lt;/h4&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;- Run “google-authenticator” as the user you want to log &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;with via SSH
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test libpam-google-authenticator-1.0]# su - ann
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ann@test ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;google-authenticator
-Do you want authentication tokens to be &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;-based &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;y/n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; y
-https://www.google.com/chart?chs&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;200x200&amp;amp;chld&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;M|0&amp;amp;cht&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;qr&amp;amp;chl&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;otpauth://totp/ann@krbonstool01%3Fsecret%3DEFZSVUJOIT3373OR
-Your new secret key is: EFZSVUJOIT3373OR
-Your verification code is 343638
-Your emergency scratch codes are:
-  12537915
-  43625506
-  55016125
-  81323386
-  33075629
-Do you want me to update your &lt;span class=&quot;s2&quot;&gt;&quot;/home/ann/.google_authenticator&quot;&lt;/span&gt; file &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;y/n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; y
-Do you want to disallow multiple uses of the same authentication
-token? This restricts you to one login about every 30s, but it increases
-your chances to notice or even prevent man-in-the-middle attacks &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;y/n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; y
-By default, tokens are good &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;30 seconds and &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;order to compensate &lt;span class=&quot;k&quot;&gt;for
-&lt;/span&gt;possible &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;-skew between the client and the server, we allow an extra
-token before and after the current time. If you experience problems with poor
-&lt;span class=&quot;nb&quot;&gt;time &lt;/span&gt;synchronization, you can increase the window from its default
-size of 1:30min to about 4min. Do you want to &lt;span class=&quot;k&quot;&gt;do &lt;/span&gt;so &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;y/n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; y
-If the computer that you are logging into is not hardened against brute-force
-login attempts, you can &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;rate-limiting &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the authentication module.
-By default, this limits attackers to no more than 3 login attempts every 30s.
-Do you want to &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;rate-limiting &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;y/n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; y
-
-- Open the URL and &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;scan the QR code using the Google Authenticator application on your smartphone.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;configuration&quot;&gt;Configuration&lt;/h4&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;- Enable Google authenticator &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;SSH login
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ann@test ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exit
-logout&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# 
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# vi /etc/pam.d/sshd
-&lt;span class=&quot;c&quot;&gt;## add below line on the top.&lt;/span&gt;
-auth       required     pam_google_authenticator.so
-
-
-- Open the SSH configuration file and &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;to yes &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; ‘ChallengeResponseAuthentication‘ line
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# vi /etc/ssh/sshd_config
-ChallengeResponseAuthentication yes
-
-
-&lt;span class=&quot;c&quot;&gt;## restart sshd&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# service sshd restart
-Stopping sshd:                                             &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;  OK  &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-Starting sshd:                                             &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;  OK  &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h4 id=&quot;note&quot;&gt;NOTE&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;If you cannot login with Verification code, you need to check SELINUX setting.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If SELINUX is set as enforcing, it should be changed to permissive or disabled&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@test ~]# vi /etc/selinux/config
-&lt;span class=&quot;nv&quot;&gt;SELINUX&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;permissive&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-</description>
-        <pubDate>Mon, 10 Feb 2014 00:00:00 +0900</pubDate>
-        <link>/2014/02/10/Two-Factor-SSH-with-Google-Authenticator/</link>
-        <guid isPermaLink="true">/2014/02/10/Two-Factor-SSH-with-Google-Authenticator/</guid>
-        
-        <category>Two Factor SSH</category>
-        
-        
-        <category>linux</category>
-        
-      </item>
-    
-      <item>
-        <title>CentOS Iptables</title>
-        <description>&lt;ul&gt;
-  &lt;li&gt;in case open 8080 port.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ServerA ~]# vi /etc/sysconfig/iptables
-
-&lt;span class=&quot;c&quot;&gt;# add below line&lt;/span&gt;
--A INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT
-
-
-&lt;span class=&quot;c&quot;&gt;# restart iptable&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ServerA ~]# /sbin/iptables -L -v -n&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-</description>
-        <pubDate>Fri, 06 Dec 2013 00:00:00 +0900</pubDate>
-        <link>/2013/12/06/centos6-iptables/</link>
-        <guid isPermaLink="true">/2013/12/06/centos6-iptables/</guid>
-        
-        <category>network</category>
         
         
         <category>linux</category>

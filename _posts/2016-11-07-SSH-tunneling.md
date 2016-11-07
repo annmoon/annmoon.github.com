@@ -10,13 +10,19 @@ tags:
 
 * ssh -L [bind_address:]port:host:hostport
 
+<br>
+
+* for e,g) if remote-server is only allowed to access from bastion-server, you can use ssh tunneling as below:
+
 {% highlight bash %}
 # on local server,
 
-[annmoon@local ~ ]$ ssh -f -N userid@bastion-server -L 3389:ldap.server:389
+[annmoon@local ~ ]$ ssh -f -N userid@bastion-server -L 3389:remote-server:389
 {% endhighlight %}
 
-* above command means,
+<br>
+
+* and then, when you access to 127.0.0.1:3389, you can go to remote-server:389
 
 <br>
 

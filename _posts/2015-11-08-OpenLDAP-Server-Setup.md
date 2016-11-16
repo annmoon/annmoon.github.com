@@ -132,7 +132,7 @@ homeDirectory: /home/testuser
 sn: testuser
 uid: testuser
 uidNumber: 2001
-email: annmoon@test.com
+email: testuser@annmoon.com
 gecos: testuser
 host: *
 loginShell: /bin/bash
@@ -140,3 +140,14 @@ userPassword: {ssha}x
 
 [root@local ~]# ldapadd -x -D cn=Manager,dc=annmoon,dc=com -W -f basedomain.ldif 
 {% endhighlight %}
+
+<br>
+
+**3) iptable check**
+{% highlight bash %}
+## if iptables is runnning, allow LDAP port (389 port)
+
+[root@local ~]# iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 389 -j ACCEPT 
+{% endhighlight %}
+
+* reference: https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=1

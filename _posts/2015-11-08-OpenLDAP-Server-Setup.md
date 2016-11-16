@@ -7,4 +7,5 @@ tags:
 ---
 
 ## OpenLDAP server set up on centos 6
+
 ### OpenLDAP server set up on centos 6

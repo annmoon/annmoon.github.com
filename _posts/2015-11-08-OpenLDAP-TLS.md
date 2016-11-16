@@ -8,7 +8,7 @@ tags:
 
 ### prerequisite
 
-* Create SSL certificate files: 
+* [Create SSL certificate files](https://annmoon.github.io/2015/11/08/OpenLDAP-Cert/ "SSL")
 
 ### Configure LDAP Server TLS
 
@@ -66,4 +66,4 @@ Password:
 [testuser@client ~]$
 {% endhighlight %}
 
-* reference: https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=3
+* reference: <https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=3>

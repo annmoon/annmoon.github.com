@@ -55,4 +55,4 @@ subject=/C=KR/ST=Seoul/L=Seoul/O=xxxx/OU=xxx/CN=ldap.annmoon.com/emailAddress=ad
 [root@local certs]# chmod 400 server.*
 {% endhighlight %}
 
-* reference: https://www.server-world.info/en/note?os=CentOS_6&p=ssl
+* reference: <https://www.server-world.info/en/note?os=CentOS_6&p=ssl>

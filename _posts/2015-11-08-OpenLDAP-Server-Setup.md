@@ -6,7 +6,7 @@ category: LDAP
 tags:
 ---
 
-* This DOC is for basic openldap server setting. For TLS, sudoers, password policy setting, you can find another posting.
+* This DOC is for basic openldap server setting. For [TLS](https://annmoon.github.io/2015/11/08/OpenLDAP-TLS/ "TLS"), sudoers, password policy setting, you can find another(link) posting.
 
 ### Install package
 
@@ -150,4 +150,4 @@ userPassword: {ssha}x
 [root@local ~]# iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 389 -j ACCEPT 
 {% endhighlight %}
 
-* reference: https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=1
+* reference: <https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=1>

@@ -22,4 +22,4 @@ Creating directory '/home/testuser'.
 [testuser@client ~]$
 {% endhighlight %}
 
-* reference: https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=2
+* reference: <https://www.server-world.info/en/note?os=CentOS_6&p=ldap&f=2>

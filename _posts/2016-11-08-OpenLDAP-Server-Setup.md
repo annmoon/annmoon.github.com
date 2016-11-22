@@ -25,13 +25,18 @@ Starting slapd: [ OK ]
 ### setting up OpenLDAP
 
 **1) Setting OpenLDAP administrator password**
+
+* [chrootpw.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/chrootpw.ldif "chrootpw")
+* [chdomain.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/chdomain.ldif "chdomain")
+* [basedomain.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/basedomain.ldif "basedomain")
+
 {% highlight bash %}
 [root@local ~]# slappasswd 
 New password:
 Re-enter new password:
 {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx
 
-[root@local ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f [chrootpw.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/chrootpw.ldif "chrootpw")
+[root@local ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
@@ -48,9 +53,9 @@ New password:
 Re-enter new password:
 {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx
 
-[root@local ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f [chdomain.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/chdomain.ldif "chdomain")
+[root@local ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 
-[root@local ~]# ldapadd -x -D cn=Manager,dc=annmoon,dc=com -W -f [basedomain.ldif](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/basedomain.ldif "basedomain")
+[root@local ~]# ldapadd -x -D cn=Manager,dc=annmoon,dc=com -W -f basedomain.ldif
 {% endhighlight %}
 
 <br>

@@ -10,7 +10,7 @@ tags:
 
 ### Configuration with OLC
 
-##### load [ppolicy schema](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/ppolicy.ldif "ppolicy schema") into OLC and [ppolicymodule module](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/ppolicymodule.ldif "ppolicymodule")
+#### load [ppolicy schema](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/ppolicy.ldif "ppolicy schema") into OLC and [ppolicymodule module](https://github.com/annmoon/OpenLDAP/blob/master/LDIF/ppolicymodule.ldif "ppolicymodule")
 
 {% highlight bash %}
 [root@local ~]# ldapmodify -D "cn=Manager,cn=config" -W -a -f /etc/openldap/schema/ppolicy.ldif
@@ -30,6 +30,8 @@ tags:
 {% endhighlight %}
 
 > This policy applies to all userPassword attributes
+
 > To see all parameters, please refer to [this](http://www.zytrax.com/books/ldap/ch6/ppolicy.html#pwdpolicyattributes "parameters")
+
 > reference: <https://tobrunet.ch/articles/openldap-password-policy-overlay/> , <http://www.openldap.org/doc/admin24/overlays.html#Password%20Policies>
 

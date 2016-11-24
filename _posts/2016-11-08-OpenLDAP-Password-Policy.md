@@ -6,9 +6,6 @@ category: LDAP
 tags:
 ---
 
-* It's draft yet.
-
-
 > Password policy module allows to define policies for the userPassword attribute.
 
 ### Configuration with OLC
